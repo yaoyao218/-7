@@ -313,7 +313,8 @@
                 const submitting = ref(false);
                 let editor = null;
                 
-                const API_BASE = 'http://localhost:8000/api';
+                // Use relative URL - works both locally and when deployed
+                const API_BASE = window.location.origin + '/api';
                 
                 // Load problem list
                 const loadProblems = async () => {
