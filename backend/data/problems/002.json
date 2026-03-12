@@ -1,0 +1,21 @@
+{
+  "id": "002",
+  "title": "兩數相加",
+  "description": "Read two integers from input (separated by space) and print their sum.",
+  "input_example": "3 5",
+  "output_example": "8",
+  "test_cases": [
+    {"input": "3 5\n", "output": "8"},
+    {"input": "10 -2\n", "output": "8"},
+    {"input": "0 0\n", "output": "0"},
+    {"input": "100 200\n", "output": "300"}
+  ],
+  "difficulty": "easy",
+  "time_limit": 5,
+  "hints": [
+    "Use input() to read user input",
+    "Use split() to separate the two numbers",
+    "Remember to convert strings to integers with int()",
+    "The sum is simply a + b"
+  ]
+}

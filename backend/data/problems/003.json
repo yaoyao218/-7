@@ -1,0 +1,20 @@
+{
+  "id": "003",
+  "title": "奇數或偶數",
+  "description": "Read an integer and print 'Even' if it's even, or 'Odd' if it's odd.",
+  "input_example": "4",
+  "output_example": "Even",
+  "test_cases": [
+    {"input": "4\n", "output": "Even"},
+    {"input": "7\n", "output": "Odd"},
+    {"input": "0\n", "output": "Even"},
+    {"input": "-3\n", "output": "Odd"}
+  ],
+  "difficulty": "easy",
+  "time_limit": 5,
+  "hints": [
+    "Use the modulo operator % to check divisibility",
+    "If n % 2 equals 0, the number is even",
+    "Otherwise, the number is odd"
+  ]
+}

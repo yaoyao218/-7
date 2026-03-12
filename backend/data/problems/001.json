@@ -1,0 +1,18 @@
+{
+  "id": "001",
+  "title": "Hello World",
+  "description": "Write a program that prints 'Hello, World!' to the screen.",
+  "input_example": "",
+  "output_example": "Hello, World!",
+  "test_cases": [
+    {"input": "", "output": "Hello, World!"},
+    {"input": "", "output": "Hello, World!\n"}
+  ],
+  "difficulty": "easy",
+  "time_limit": 5,
+  "hints": [
+    "Use the print() function",
+    "Remember to include the comma and exclamation mark",
+    "The output should be exactly 'Hello, World!'"
+  ]
+}

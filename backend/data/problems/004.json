@@ -1,0 +1,20 @@
+{
+  "id": "004",
+  "title": "三數最大",
+  "description": "Read three integers and print the largest one.",
+  "input_example": "3 7 5",
+  "output_example": "7",
+  "test_cases": [
+    {"input": "3 7 5\n", "output": "7"},
+    {"input": "10 2 8\n", "output": "10"},
+    {"input": "-1 -5 -3\n", "output": "-1"},
+    {"input": "5 5 3\n", "output": "5"}
+  ],
+  "difficulty": "medium",
+  "time_limit": 5,
+  "hints": [
+    "Use the max() function to find the largest",
+    "Or compare them one by one using if statements",
+    "Make sure to handle equal numbers correctly"
+  ]
+}
