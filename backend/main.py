@@ -18,10 +18,6 @@ app.add_middleware(
 # Include API routes
 app.include_router(router, prefix="/api", tags=["judge"])
 
-@app.get("/")
-def root():
-    return {"message": "Python Judge API", "docs": "/docs"}
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
