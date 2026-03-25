@@ -4,8 +4,12 @@ import subprocess
 import tempfile
 import os
 import re
+import sys
+import shutil
+import json
 from typing import List, Dict, Any
-from models import Problem, JudgeResult
+
+PYTHON_PATH = shutil.which("python") or shutil.which("python3") or sys.executable
 
 # Security: Block dangerous imports
 BLOCKED_IMPORTS = [
@@ -45,7 +49,6 @@ def check_security(code: str) -> tuple[bool, str]:
 def execute_code(code: str, input_data: str, time_limit: int = 5) -> Dict[str, Any]:
     """Execute Python code with input and return output"""
     
-    # Security check first
     secure, error_msg = check_security(code)
     if not secure:
         return {
@@ -55,16 +58,28 @@ def execute_code(code: str, input_data: str, time_limit: int = 5) -> Dict[str, A
             'timed_out': False
         }
     
-    # Create temporary file for execution
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
-        f.write(code)
+    test_input = json.loads(input_data) if input_data else {}
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
+        test_harness = f"""import json
+
+{code}
+
+# Test execution
+args = {test_input}
+if isinstance(args, dict) and 'args' in args:
+    result = eval('two_sum')(*args['args'])
+else:
+    result = eval('two_sum')(**args) if isinstance(args, dict) else eval('two_sum')(args)
+
+print(json.dumps(result))
+"""
+        f.write(test_harness)
         temp_file = f.name
     
     try:
-        # Execute with subprocess
         result = subprocess.run(
-            ['python3', temp_file],
-            input=input_data,
+            [PYTHON_PATH, temp_file],
             capture_output=True,
             text=True,
             timeout=time_limit,
@@ -73,7 +88,7 @@ def execute_code(code: str, input_data: str, time_limit: int = 5) -> Dict[str, A
         
         return {
             'success': result.returncode == 0,
-            'output': result.stdout,
+            'output': result.stdout.strip(),
             'error': result.stderr if result.returncode != 0 else '',
             'timed_out': False
         }
@@ -93,57 +108,5 @@ def execute_code(code: str, input_data: str, time_limit: int = 5) -> Dict[str, A
             'timed_out': False
         }
     finally:
-        # Clean up temp file
         if os.path.exists(temp_file):
             os.remove(temp_file)
-
-def judge_code(code: str, problem: Problem) -> JudgeResult:
-    """Judge code against all test cases"""
-    
-    test_results = []
-    passed_count = 0
-    
-    for i, test_case in enumerate(problem.test_cases):
-        result = execute_code(code, test_case.input, problem.time_limit)
-        
-        # Normalize output for comparison
-        actual_output = result['output'].strip()
-        expected_output = test_case.output.strip()
-        
-        # Check result
-        if result['timed_out']:
-            test_passed = False
-            test_error = 'Time Limit Exceeded'
-        elif not result['success']:
-            test_passed = False
-            test_error = result['error']
-        elif actual_output == expected_output:
-            test_passed = True
-            test_error = None
-        else:
-            test_passed = False
-            test_error = f"Expected: {expected_output}, Got: {actual_output}"
-        
-        test_results.append({
-            'test_number': i + 1,
-            'passed': test_passed,
-            'input': test_case.input,
-            'expected_output': expected_output,
-            'actual_output': actual_output,
-            'error': test_error
-        })
-        
-        if test_passed:
-            passed_count += 1
-    
-    # Determine overall result
-    all_passed = passed_count == len(problem.test_cases)
-    
-    return JudgeResult(
-        correct=all_passed,
-        problem_id=problem.id,
-        total_tests=len(problem.test_cases),
-        passed_tests=passed_count,
-        results=test_results,
-        hints=problem.hints if not all_passed else []
-    )
